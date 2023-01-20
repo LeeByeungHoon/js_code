@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        label {
+            /* display: block; */
+        }
+        #add-btn {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <form action="#">
+        <label>
+            제목: <input type="text" name="title" id="title-input">
+        </label>
+        <button id="add-btn">등록하기</button>
+    </form>
+
+
+    <h1>할 일 목록</h1>
+    <section class="todo">
+        <ul class="todo-list">
+
+        </ul>
+    </section>
+
+    
+    <script>
+        // 요청 URL
+        const API_BASE_URI = 'http://localhost:8080/api/todos';
+
+        // 렌더링 함수
+        const render = ({todos}) => {
+            console.log(todos);
+
+            let tags = '';
+            todos.forEach(todo => {
+                const {id, done, title} = todo;
+
+                tags += `
+                    <li data-id=${id}>
+                        제목: ${title}, 완료여부: ${done}
+                        <button class='del-btn'>삭제</button>
+                    </li>
+                `;
+            });
+            const $ul = document.querySelector('.todo-list');
+            $ul.innerHTML = tags;
+        };
+
+
+        // 서버에 get요청 보내기
+        const getTodoList = url => {
+
+            fetch(url) // 요청보내기
+                .then(res => res.json()) // 결과에서 json꺼내기
+                .then(todoList => { // json을 js객체로 변환
+                    // console.log(todoList);
+                    render(todoList);
+                });
+
+            /*
+            const response = fetch(url);
+            // console.log(response);
+
+            // 응답 결과 받기
+            const json = response
+                        .then(resData => resData.json());
+            json.then(todoList => {
+                console.log(todoList);
+            });
+            */
+        };
+
+
+        // 등록버튼 클릭 이벤트 바인딩
+        document.getElementById('add-btn').onclick = e => {
+            e.preventDefault();
+            // 서버에 할일 내용을 제출한다(POST요청보내기).
+            console.log('등록버튼 눌렀음~');
+
+            const $titleInput = document.getElementById('title-input');
+            const payload = {
+                title: $titleInput.value
+            };
+
+            // POST요청을 서버로 보냄
+            fetch(API_BASE_URI, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(todoList => {
+                render(todoList);
+            });
+
+        };
+
+        // 삭제 처리 이벤트 핸들러 바인딩
+        document.querySelector('.todo-list').onclick = e => {
+
+            if (!e.target.matches('.todo-list .del-btn')) {
+                return;
+            }
+            // console.log(e.target.parentNode.dataset.id);
+            // console.log('삭제버튼 클릭함~');
+
+            const id = e.target.parentNode.dataset.id;
+
+            fetch(`${API_BASE_URI}/${id}`, {
+                method: 'DELETE'
+            })
+            .then(res => res.json())
+            .then(todoList => {
+                render(todoList);
+            });
+            
+
+        };
+
+
+        // 함수 호출
+        getTodoList(API_BASE_URI);
+    </script>
+
+</body>
+</html>

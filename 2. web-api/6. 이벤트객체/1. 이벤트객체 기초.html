@@ -13,10 +13,11 @@
 
     <script>
 
-        document.onclick = function(e) {
-            console.log(e);
+        document.onclick = function({x, y}) {
+            // const {x,y} = e;
+            // console.log(e);
             const $msg = document.querySelector('.msg');
-            $msg.textContent = `x: ${e.x}, y: ${e.y}`;
+            $msg.textContent = `x: ${x}, y: ${y}`;
         };
 
     </script>

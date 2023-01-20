@@ -17,6 +17,7 @@
         const $msg = document.querySelector('.msg');
 
         $input.addEventListener('keyup', function(e) {
+            console.log(e);
             if (e.key === 'Enter') {
                 $msg.textContent = $input.value;
                 $input.value = '';

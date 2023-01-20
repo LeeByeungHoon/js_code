@@ -51,16 +51,32 @@ console.log(increase()); // 3?
 
 // const increase = increaseClosure();
 
-const increase = (() => {
-    let num = 0; // 상태 변수
+
+
+const increaseClosure = () =>{
+    let num = 0; // 상태변수 (지역 변수)
+
+    function increase(){
+        return ++num;
+    }
+    return increase
+    // return () => ++num;
+};
+
+const result = increaseClosure();
+
+console.log(result());
+console.log(result());
+console.log(result());
+
+// 즉시 실행 함수
+const result2 = (() => {
+    let num = 0;
     return () => ++num;
 })();
-
-console.log(increase());
-console.log(increase());
-console.log(increase());
-console.log(increase());
-
+console.log(result2());
+console.log(result2());
+console.log(result2());
 // const another = function() {
 //     return ++num;
 // }
